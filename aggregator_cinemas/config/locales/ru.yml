@@ -1,0 +1,55 @@
+ru:
+  errors:
+    messages:
+      extension_whitelist_error: 'не удалось загрузить. Данный формат не поддерживается.'
+  common:
+    errors: 'При заполнении формы возникли ошибки:'
+    back: 'Назад'
+  will_paginate:
+    previous_label: '&larr; Назад'
+    next_label: 'Вперёд &rarr;'
+  posts:
+    index:
+      title: 'Статьи'
+      empty: 'Статей нет.'
+    new:
+      title: 'Новая статья'
+    edit:
+      title: 'Редактирование статьи'
+    form:
+      submit: '%{action} статью'
+  movies:
+    index:
+      title: 'Фильмы'
+      movies_not_found: 'Фильмы не найдены.'
+    show:
+      title: 'Фильм'
+      movie_not_found: 'Фильм не найден.'
+  admin:
+    movies:
+      new:
+        title: 'Добавить фильм в базу данных'
+      edit:
+        title: 'Изменение информации о фильме'
+      form:
+        submit: '%{action}'
+    genres:
+      new:
+        title: 'Добавить жанр'
+      edit:
+        title: 'Редактирование жанра'
+      form:
+        submit: '%{action} жанр'
+  genres:
+    index:
+      title: 'Жанры'
+    show:
+      genre_not_found: 'Жанр не найден.'
+      movies_not_found: 'Фильмы не найдены.'
+  devise:
+    registrations:
+      new:
+        header: 'Регистрация пользователя'
+    sessions:
+      new:
+        header: 'Авторизация пользователя'

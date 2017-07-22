@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AggregatorCinemas</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+  
+    <wrapper class="d-flex flex-column container">
+      <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <%= link_to image_tag('/images/logo.png'), root_path, class: 'navbar-brand' %>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <%= link_to 'Кронверк Синема', root_path, class: 'nav-link' %>
+            </li>
+            <li class="nav-item">
+              <%= link_to 'Мори Синема', root_path, class: 'nav-link' %>
+            </li>
+            <li class="nav-item">
+              <%= link_to 'Рублион Синема', root_path, class: 'nav-link' %>
+            </li>
+            <li class="nav-item">
+              <%= link_to 'Рублион Парма', root_path, class: 'nav-link' %>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav pull-xs-right">
+            <% if user_signed_in? %>
+              <li class="nav-item">
+                <%= link_to 'Выход', destroy_user_session_path, method: :delete, class: 'nav-link' %>
+              </li>
+            <% else %>
+              <li class="nav-item">
+                <%= link_to 'Вход', new_user_session_path, class: 'nav-link' %>
+              </li>
+              <li class="nav-item">
+                <%= link_to 'Регистрация', new_user_registration_path, class: 'nav-link' %>
+              </li>
+            <% end %>
+          </ul>
+
+          <!-- <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          </form> -->
+        </div>
+      </nav>
+
+          
+          
+
+
+
+          <!-- <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          </form> -->
+        </div>
+      </nav>
+
+      <main class="main">
+        <div class="row">
+          <div class="col-md-2"></div>
+          <div class="col-md-8">
+            <% flash.each do |name, message| %>
+              <div class="alert <%= bootstrap_class_for(name) %>">
+                <button class="close" data-dismiss="alert">&times;</button>
+                <%= message %>
+              </div>
+            <% end %>
+          </div>
+          <div class="col-md-2"></div>
+        </div>
+        <div class="row">
+          <div class="col-md-2"></div>
+          <div class="col-md-8">
+            <%= yield %>
+          </div>
+          <div class="col-md-2"></div>
+        </div>
+      </main>
+
+      <footer>
+        <p class="text-muted">
+          <%= link_to 'Агрегатор кинотеатров Сыктывкара', root_path %> &copy; <%= Time.current.year %>
+        </p>
+      </footer>
+    </wrapper>
+  </body>
+</html>

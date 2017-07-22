@@ -1,0 +1,88 @@
+<% if @movie.errors.any? %>
+  <div class="alert alert-danger alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h5><%= t('common.errors') %></h5>
+    <ul>
+      <% @movie.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_for [:admin, @movie], html: { multipart: true } do |f| %>
+  <div class="form-group">
+    <%= f.label :title %>
+    <%= f.text_field :title, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :all_genres %>
+    <%= f.text_field :all_genres, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :rating_kinopoisk %>
+    <%= f.number_field(:rating_kinopoisk, in: 1.0..10.0, step: 0.1, class: "form-control") %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :rating_imdb %>
+    <%= f.number_field(:rating_imdb, in: 1.0..10.0, step: 0.1, class: "form-control") %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :voice_kinopoisk %>
+    <%= f.number_field(:voice_kinopoisk, in: 0..1000000, step: 1, class: "form-control") %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :voice_imdb %>
+    <%= f.number_field(:voice_imdb, in: 0..1000000, step: 1, class: "form-control") %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :age_rating %>
+    <%= f.text_field :age_rating, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :duration %>
+    <%= f.time_field :duration, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :country %>
+    <%= f.text_field :country, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :producer %>
+    <%= f.text_field :producer, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :budget %>
+    <%= f.text_field :budget, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :actors %>
+    <%= f.text_area :actors, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description %>
+    <%= f.trix_editor :description, class: "editor" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :image %><br>
+    <%= f.file_field :image %>
+  </div>
+
+  <div class="form-group">
+    <%= f.submit t('.submit', action: @movie.new_record? ? 'Добавить фильм' : 'Изменить информацию о фильме'), class: "btn btn-primary" %>
+    <%= link_to t('common.back'), :back, class: "btn btn-success" %>
+  </div>
+<% end %>

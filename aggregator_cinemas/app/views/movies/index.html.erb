@@ -1,0 +1,13 @@
+<% if @movies.empty? %>
+  <h2><%= t('.movies_not_found') %></h2>
+<% else %>
+  <% if user_signed_in? && current_user.admin? %>
+    <%= link_to 'Добавить фильм', new_admin_movie_path, class: 'btn btn-outline-primary btn-sm' %>
+  <% end %>
+
+  <section id='movies'>
+    <%= render @movies %>
+  </section>
+
+  <%= will_paginate @movies, renderer: WillPaginate::ActionView::BootstrapLinkRenderer %>
+<% end %>

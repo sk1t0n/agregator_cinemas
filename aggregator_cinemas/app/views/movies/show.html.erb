@@ -1,0 +1,67 @@
+<% if @movie == nil %>
+  <h1><%= t('.movie_not_found') %></h1>
+<% else %>
+  <article class="movie">
+    <section class="movie_head">
+      <h1><%= @movie.title %></h1>
+      <small>
+        <time><%= @movie.created_at.to_date.strftime("%d %B, %Y") %></time>
+        <% if user_signed_in? && current_user.admin? %>
+          |
+          <%= link_to 'Изменить', edit_admin_movie_path(@movie) %>
+          |
+          <%= link_to 'Удалить', admin_movie_path(@movie), method: :delete, data: { confirm: 'Вы уверены?' } %>
+        <% end %>
+      </small>
+    </section>
+
+    <section class="movie_info clearfix">
+      <div id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="card">
+          <div class="card-header" role="tab" id="headingOne">
+            <h5 class="mb-0">
+              <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                О фильме
+              </a>
+            </h5>
+          </div>
+
+          <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
+            <div class="card-block">
+              <div>
+                <%= image_tag @movie.image.url(:large), class: 'img-show img-fluid img_large' if @movie.image? %>
+                <p>
+                Жанр: <% @movie.genres.each do |genre| %>
+                  <%= link_to genre.title, genre_path(genre.title) %>
+                <% end %><br>
+                Рейтинг Кинопоиск: <%= @movie.rating_kinopoisk %>, количество голосов: <%= @movie.voice_kinopoisk %>.<br>
+                Рейтинг IMDB: <%= @movie.rating_imdb %>, количество голосов: <%= @movie.voice_imdb %>.<br>
+                Возрастной рейтинг: <%= @movie.age_rating %><br>
+                Продолжительность фильма: <%= @movie.duration.to_time.strftime("%H:%M") if @movie.duration? %><br>
+                Страна: <%= @movie.country %><br>
+                Режиссёр: <%= @movie.producer %><br>
+                Бюджет: <%= @movie.budget %><br>
+                В ролях: <%= @movie.actors %>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header" role="tab" id="headingTwo">
+            <h5 class="mb-0">
+              <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Сюжет фильма
+              </a>
+            </h5>
+          </div>
+          <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
+            <div class="card-block">
+              <div class="movie_description"><%= @movie.description.html_safe %></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </article>
+<% end %>

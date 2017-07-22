@@ -1,0 +1,31 @@
+ru:
+  activerecord:
+    models:
+      post: 'Статья'
+      movie: 'Фильм'
+    attributes:
+      post:
+        title: 'Название'
+        summary: 'Краткое содержание'
+        body: 'Содержание'
+        image: 'Изображение'
+      movie:
+        title: 'Название'
+        rating_kinopoisk: 'Рейтинг Кинопоиск'
+        rating_imdb: 'Рейтинг IMDB'
+        voice_kinopoisk: 'Количество голосов по рейтингу Кинопоиск'
+        voice_imdb: 'Количество голосов по рейтингу IMDB'
+        age_rating: 'Возрастной рейтинг'
+        duration: 'Время'
+        country: 'Страна'
+        producer: 'Режиссёр'
+        budget: 'Бюджет'
+        actors: 'В ролях'
+        description: 'Описание'
+        image: 'Изображение'
+        all_genres: 'Жанры'
+      genre:
+        title: 'Название'
+    errors:
+      messages:
+        blank: 'не может быть пустым'

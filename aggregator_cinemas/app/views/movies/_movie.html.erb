@@ -1,0 +1,23 @@
+<article class="movie">
+  <section class="movie_head">
+    <h2><%= link_to movie.title, movie_path(movie) %></h2>
+    <small>
+      <time><%= movie.created_at.to_date.strftime("%d %B, %Y") %></time>
+      <% if user_signed_in? && current_user.admin? %>
+        |
+        <%= link_to 'Изменить', edit_admin_movie_path(movie) %>
+        |
+        <%= link_to 'Удалить', admin_movie_path(movie), method: :delete, data: { confirm: 'Вы уверены?' } %>
+      <% end %>
+    </small>
+  </section>
+
+  <section class="movie_info clearfix">
+    <%= image_tag movie.image.url(:thumb), class: 'img-thumbnail img-fluid img_thumb' if movie.image? %>
+    <%= movie.description.html_safe %>
+  </section>
+
+  <section class="movie_footer">
+    <%= raw movie.genres.map(&:title).map{ |genre| link_to genre, genre_path(genre), class: 'badge badge-default' }.join(' ') %>
+  </section>
+</article>

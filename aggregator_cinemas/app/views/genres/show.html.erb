@@ -1,0 +1,11 @@
+<% if @title == '' %>
+  <h1><%= t('.genre_not_found') %></h1>
+<% else %>
+  <h1><%= @title %></h1>
+  <% if @movies.empty? %>
+    <h2><%= t('.movies_not_found') %></h2>
+  <% else %>
+    <%= render @movies %>
+    <%= will_paginate @movies, renderer: WillPaginate::ActionView::BootstrapLinkRenderer %>
+  <% end %>
+<% end %>
