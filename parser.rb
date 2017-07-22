@@ -78,21 +78,31 @@ rating_kp_img = html.css('.kp>img')
 kinopoisk_ids = rating_kp_img.map { |img| img['src'].split('/')[1].split('.')[0] }
 kinopoisk_movie_names = rating_kp_img.map { |img| img['alt'].split(' -')[1] }
 
-kinopoisk_ids.size.times { |i| puts 'https://rating.kinopoisk.ru/' + kinopoisk_ids[i] + '.xml' }
-
 kinopoisk_movie_names.each_with_index do |name, i|
   url = 'https://rating.kinopoisk.ru/' + kinopoisk_ids[i] + '.xml'
   xml  = Nokogiri::XML(open(url))
-  movies[name][:ratings] = { 
-#    :kinopoisk => { :rating => xml.css('kp_rating').text, :num_vote => xml.css('kp_rating')[i]['num_vote'] }, 
-#    :imdb => { :rating => xml.css('imdb_rating').text, :num_vote => xml.css('imdb_rating')[i]['num_vote'] }
-  }
+  movies[name][:kinopoisk] = {}
+  movies[name][:imdb] = {}
+  if xml.css('rating imdb_rating').size == 0
+    # parse imdb.com
+  else
+    movies[name][:imdb] = { 
+    	:rating => xml.css('imdb_rating').text, 
+    	:num_vote => xml.xpath('//rating//imdb_rating').attr('num_vote').content 
+    }
+  end
+  if xml.css('rating kp_rating').size > 0
+    movies[name][:kinopoisk] = { 
+    	:rating => xml.css('kp_rating').text, 
+    	:num_vote => xml.xpath('//rating//kp_rating').attr('num_vote').content 
+    }
+  end
 end
 
-#puts 'url: ' + url + day
-#puts "\n"
-#movies.size.times do |i|
-#  puts movies.keys[i]
-#  puts movies[movies.keys[i]]
-#  puts "\n"
-#end
+puts 'url: ' + 'http://www.kino11.ru/pars.php?day=' + day
+puts "\n"
+movies.size.times do |i|
+  puts movies.keys[i]
+  puts movies[movies.keys[i]]
+  puts "\n"
+end
