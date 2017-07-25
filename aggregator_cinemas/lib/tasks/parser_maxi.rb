@@ -6,60 +6,55 @@ class ParserMaxi
   attr_accessor :movie_names
   attr_accessor :movie_urls
   attr_accessor :html
-  attr_accessor :url
+  attr_accessor :url_list_movies
+  attr_accessor :url_movie_sessions
   
-  # -- параметры GET-запроса --
+  # -- параметры GET-запроса для получения списка фильмов --
   # cinema=461 - кинотеатр: Кронверк Синема Макси / Сыктывкар
   # age - возрастные ограничения: '', '0', '6', '12', '16', '18'
   # when - когда: '', 'today' - сегодня на экранах, 'soon' - скоро на экранах
   # format - формат просмотра: 'any' - любой, '2d', '3d', 'imax', 'kinosale' - акции
-  # subtitles - субтитры: '', 'Y'  
-  def initialize(cinema: '461', age: '', day: 'today', format: 'any', subtitles: '')
+  # subtitles - субтитры: '', 'Y'
+  # -- параметры GET-запроса для получения сеансов фильма --
+  # CINEMA_ID=8703 - кинотеатр: Кронверк Синема Макси / Сыктывкар
+  def initialize(cinema: '461', age: '', day: 'today', format: 'any', subtitles: '', cinema_id: '8703')
     url = "https://www.formulakino.ru/bitrix/templates/formulakino/ajax/list_main.php?"
     params = "cinema=#{cinema}&age=#{age}&when=#{day}&format=#{format}&subtitles=#{subtitles}&list_template=page"
-    self.url = url + params
+    self.url_list_movies = url + params
+    url = "http://www.formulakino.ru/bitrix/templates/formulakino/ajax/cinema_schedule.php?CINEMA_ID=#{cinema_id}"
+    self.url_movie_sessions = url
     @movies = {}
     self.movie_names = []
     self.movie_urls = []
-    self.html = Nokogiri::HTML(open(self.url), nil, 'utf-8')
+    self.html = Nokogiri::HTML(open(self.url_list_movies), nil, 'utf-8')
   end
   
   def run
-    fill_movie_names_urls(movie_names, movie_urls, html)
+    fill_movie_names_urls(movie_names, movie_urls, url_movie_sessions)
     add_data(movie_names, movie_urls, html)
-#    movie_names.each do |name|
-#      puts name
-#      puts @movies[name]
-#      puts "\n"
-#    end
   end
   
-  def fill_movie_names_urls(movie_names, movie_urls, html)
-    html.css('div.info>h2>a').each do |a|
+  def fill_movie_names_urls(movie_names, movie_urls, url)
+    html = Nokogiri::HTML(open(url), nil, 'utf-8')
+    html.css('div.cinemas>div.item>b.name>a').each do |a|
       movie_names << a.text
       movie_urls << 'http://formulakino.ru' + a['href']
     end
   end
   
   def add_data(movie_names, movie_urls, html)
-    add_image_small_to_movies(movie_names, html)
     movie_urls.each_with_index do |url, i|
       html = Nokogiri::HTML(open(url), nil, 'utf-8')
       add_trailer_to_movies(html, movie_names[i])
       add_images_to_movies(html, movie_names[i])
       add_data_to_movies(html, movie_names[i])
       add_description_to_movies(html, movie_names[i])
-#      add_sessions_to_movies(html, movie_names[i])
     end
-  end
-  
-  def add_image_small_to_movies(movie_names, html)
-    html.css('article img').each_with_index do |img, i| 
-      movies[movie_names[i]] = { img_small: 'http://formulakino.ru' + img['src'] }
-    end
+    add_sessions_to_movies(self.url_movie_sessions)
   end
   
   def add_trailer_to_movies(html, name)
+    @movies[name] = {}
     if html.css('div.pane0').size > 0
       @movies[name][:trailer] = 'http:' + html.css('div.pane0 a.fancybox').attr('href')
     else
@@ -78,7 +73,6 @@ class ParserMaxi
   def add_data_to_movies(html, name)
     items = []
     html.css('aside>div.props').text.split("\n").each { |item| items << item.strip if item.size > 0 }
-
     items.each_with_index do |item, i|
       case item
       when /форматах|формате/
@@ -115,7 +109,39 @@ class ParserMaxi
     @movies[name][:description] = html.css('div.detailtext').text.strip
   end
   
-#  def add_sessions_to_movies(html, name)
-#    
-#  end
+  def add_sessions_to_movies(url)
+    html = Nokogiri::HTML(open(url), nil, 'utf-8')
+    html.css('div.item').each do |item|
+      movie_name = item.css('b>a').text
+      @movies[movie_name][:sessions] = []
+      item.css('div.hall').each do |hall|
+        hall_name = hall.css('span.hall-name-type').text.strip
+        hall.css('div.times').each do |times|
+          times.css('span.date').each do |span_date|
+            session_date = span_date['data-date']
+            span_date.css('span.hide320').each do |hide320|
+              data_id = hide320['data-id']
+              session_time = hide320.css('a.tr_chart').text.strip.split("\t")[0]
+              format = hide320.css('span.marker').text
+              @movies[movie_name][:sessions].push({
+                hall_name: hall_name,
+                session_date: session_date,
+                session_time: session_time,
+                format: format,
+                session_price: get_movie_session_price(data_id)
+                })
+            end
+          end
+        end
+      end
+    end
+  end
+  
+  def get_movie_session_price(id)
+    require 'json'
+    url = "http://www.formulakino.ru/ajax/movieSchedule/getPrice/?id=#{id}"
+    json = JSON.parse(Nokogiri::HTML(open(url), nil, 'utf-8').css('p').text)
+    price = json['data'][0]['SUM_RUB']
+    return price
+  end
 end
