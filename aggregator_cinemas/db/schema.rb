@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170719160230) do
+ActiveRecord::Schema.define(version: 20170718150807) do
 
   create_table "cinemas", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "title"
@@ -40,45 +40,37 @@ ActiveRecord::Schema.define(version: 20170719160230) do
   end
 
   create_table "movie_sessions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.time "duration"
-    t.string "description"
-    t.integer "price"
     t.date "date"
+    t.time "time"
+    t.string "format"
+    t.integer "price"
+    t.bigint "cinema_id"
+    t.bigint "movie_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["cinema_id"], name: "index_movie_sessions_on_cinema_id"
+    t.index ["movie_id"], name: "index_movie_sessions_on_movie_id"
   end
 
   create_table "movies", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "title"
-    t.string "image"
-    t.float "rating_kinopoisk", limit: 24
-    t.float "rating_imdb", limit: 24
-    t.integer "voice_kinopoisk"
-    t.integer "voice_imdb"
+    t.text "description"
+    t.string "duration"
     t.string "age_rating"
-    t.time "duration"
     t.string "country"
-    t.string "producer"
+    t.string "director"
     t.string "budget"
     t.text "actors"
-    t.text "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "pictures", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.text "trailer"
+    t.text "images"
+    t.date "premiere"
+    t.float "rating_kinopoisk", limit: 24
+    t.integer "voice_kinopoisk"
+    t.float "rating_imdb", limit: 24
+    t.integer "voice_imdb"
     t.string "image"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "posts", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string "title"
-    t.text "summary"
-    t.text "body"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "image"
   end
 
   create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -91,9 +83,9 @@ ActiveRecord::Schema.define(version: 20170719160230) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
+    t.boolean "admin", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "admin", default: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -101,4 +93,6 @@ ActiveRecord::Schema.define(version: 20170719160230) do
 
   add_foreign_key "genre_movies", "genres"
   add_foreign_key "genre_movies", "movies"
+  add_foreign_key "movie_sessions", "cinemas"
+  add_foreign_key "movie_sessions", "movies"
 end
