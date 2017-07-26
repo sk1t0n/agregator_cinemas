@@ -40,7 +40,7 @@ class Admin::MoviesController < Admin::AdminController
 
   def movie_params
     params.require(:movie).permit(:title, :image, :rating_kinopoisk, :rating_imdb,
-      :voice_kinopoisk, :voice_imdb, :age_rating, :duration, :country, :producer,
+      :voice_kinopoisk, :voice_imdb, :age_rating, :duration, :country, :director,
       :budget, :actors, :description, :all_genres)
   end
 end
