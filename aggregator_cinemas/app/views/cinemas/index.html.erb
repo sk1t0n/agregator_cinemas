@@ -1,0 +1,9 @@
+<h1>Кинотеатры Сыктывкара</h1>
+
+<% if @cinemas.size > 0  %>
+  <ul>
+    <% @cinemas.each do |cinema| %>
+      <li><%= cinema.title %></li>
+    <% end %>
+  </ul>
+<% end %>

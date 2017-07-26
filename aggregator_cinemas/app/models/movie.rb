@@ -13,7 +13,7 @@ class Movie < ApplicationRecord
 
   def all_genres=(titles)
     self.genres = titles.split(',').map do |title|
-      Genre.where(title: title.strip).first_or_create!
+      Genre.where(title: title.downcase.strip).first_or_create!
     end
   end
 end

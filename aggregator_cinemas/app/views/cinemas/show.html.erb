@@ -1,0 +1,28 @@
+<h1><%= @cinema.title %></h1>
+
+<div class="table-responsive">
+  <table class="table table-bordered">
+    <thead class="thead-inverse">
+      <tr>
+        <th scope="row">Название фильма</th>
+        <th scope="row">Дата</th>
+        <th scope="row">Время</th>
+        <th scope="row">Формат</th>
+        <th scope="row">Цена</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @sessions.each do |session| %>
+      <tr>
+        <td><%= @hash_movie_id_title[session.movie_id] %></td>
+        <td><%= session.date.strftime("%d/%m/%Y") %></td>
+        <td><%= session.time.strftime("%H:%M") %></td>
+        <td><%= session.format %></td>
+        <td><%= session.price %> р.</td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= will_paginate @sessions, renderer: WillPaginate::ActionView::BootstrapLinkRenderer %>
