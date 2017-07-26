@@ -6,31 +6,19 @@ class ParserMaxi
   attr_accessor :movie_names
   attr_accessor :movie_urls
   attr_accessor :html
-  attr_accessor :url_list_movies
-  attr_accessor :url_movie_sessions
+  attr_accessor :url
   
-  # -- параметры GET-запроса для получения списка фильмов --
-  # cinema=461 - кинотеатр: Кронверк Синема Макси / Сыктывкар
-  # age - возрастные ограничения: '', '0', '6', '12', '16', '18'
-  # when - когда: '', 'today' - сегодня на экранах, 'soon' - скоро на экранах
-  # format - формат просмотра: 'any' - любой, '2d', '3d', 'imax', 'kinosale' - акции
-  # subtitles - субтитры: '', 'Y'
-  # -- параметры GET-запроса для получения сеансов фильма --
   # CINEMA_ID=8703 - кинотеатр: Кронверк Синема Макси / Сыктывкар
-  def initialize(cinema: '461', age: '', day: 'today', format: 'any', subtitles: '', cinema_id: '8703')
-    url = "https://www.formulakino.ru/bitrix/templates/formulakino/ajax/list_main.php?"
-    params = "cinema=#{cinema}&age=#{age}&when=#{day}&format=#{format}&subtitles=#{subtitles}&list_template=page"
-    self.url_list_movies = url + params
-    url = "http://www.formulakino.ru/bitrix/templates/formulakino/ajax/cinema_schedule.php?CINEMA_ID=#{cinema_id}"
-    self.url_movie_sessions = url
+  def initialize(cinema_id: '8703')
+    self.url = "http://www.formulakino.ru/bitrix/templates/formulakino/ajax/cinema_schedule.php?CINEMA_ID=#{cinema_id}"
     @movies = {}
     self.movie_names = []
     self.movie_urls = []
-    self.html = Nokogiri::HTML(open(self.url_list_movies), nil, 'utf-8')
+    self.html = Nokogiri::HTML(open(url), nil, 'utf-8')
   end
   
   def run
-    fill_movie_names_urls(movie_names, movie_urls, url_movie_sessions)
+    fill_movie_names_urls(movie_names, movie_urls, url)
     add_data(movie_names, movie_urls, html)
   end
   
@@ -50,7 +38,7 @@ class ParserMaxi
       add_data_to_movies(html, movie_names[i])
       add_description_to_movies(html, movie_names[i])
     end
-    add_sessions_to_movies(self.url_movie_sessions)
+    add_sessions_to_movies(url)
   end
   
   def add_trailer_to_movies(html, name)
@@ -129,7 +117,7 @@ class ParserMaxi
                 session_time: session_time,
                 format: format,
                 session_price: get_movie_session_price(data_id)
-                })
+              })
             end
           end
         end
@@ -141,7 +129,11 @@ class ParserMaxi
     require 'json'
     url = "http://www.formulakino.ru/ajax/movieSchedule/getPrice/?id=#{id}"
     json = JSON.parse(Nokogiri::HTML(open(url), nil, 'utf-8').css('p').text)
-    price = json['data'][0]['SUM_RUB']
+    if json['success']
+      price = json['data'][0]['SUM_RUB']
+    else
+      price = nil
+    end
     return price
   end
 end
