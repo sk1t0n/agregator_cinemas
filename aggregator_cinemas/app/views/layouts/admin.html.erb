@@ -16,20 +16,17 @@
       <%= link_to 'Панель администратора', root_path, class: 'navbar-brand' %>
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <%= link_to 'Кронверк Синема', root_path, class: 'nav-link' %>
-          </li>
-          <li class="nav-item">
-            <%= link_to 'Мори Синема', root_path, class: 'nav-link' %>
-          </li>
-          <li class="nav-item">
-            <%= link_to 'Рублион Синема', root_path, class: 'nav-link' %>
-          </li>
-          <li class="nav-item">
-            <%= link_to 'Рублион Парма', root_path, class: 'nav-link' %>
-          </li>
-        </ul>
+        <% if @cinema_ids.size > 0 %>
+          <ul class="navbar-nav mr-auto">
+            <% @cinema_ids.size.times do |i| %>
+              <% if @cinema_ids[i] != nil %>
+                <li>
+                  <%= link_to @cinema_titles[i], cinema_path(@cinema_ids[i]), class: 'nav-link' %>
+                </li>
+              <% end %>
+            <% end %>
+          </ul>
+        <% end %>
 
         <ul class="navbar-nav pull-xs-right">
           <% if user_signed_in? %>
@@ -45,29 +42,10 @@
             </li>
           <% end %>
         </ul>
-
-        <!-- <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="text" placeholder="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form> -->
       </div>
     </nav>
 
     <wrapper class="d-flex flex-column container">
-      
-
-          
-          
-
-
-
-          <!-- <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-          </form> -->
-        </div>
-      </nav>
-
       <main class="main">
         <div class="row">
           <div class="col-md-2"></div>
