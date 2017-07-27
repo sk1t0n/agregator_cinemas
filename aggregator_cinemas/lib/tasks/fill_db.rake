@@ -3,12 +3,23 @@ namespace :fill_db do
   @count_update_items_movie = 0
   @count_create_items_genre = 0
   @count_update_items_genre = 0
+  @count_delete_items_movie_session = 0
   @all_genres = []
   @all_genres_movie = {}
+  
+  desc "Заполнение базы данных с помощью парсера кинотеатра Мори Синема"
+  task :parser_mori => :environment do
+    require_relative 'parser_mori'
+    
+    parser_mori = ParserMori.new
+    parser_mori.run
+  end
   
   desc "Заполнение базы данных с помощью парсера кинотеатра Кронверк Синема"
   task :parser_maxi => :environment do
     require_relative 'parser_maxi'
+    
+    KRONVERK = 'Кронверк Синема'
     
     def fill_table_movies(name, parser_maxi)
       if Movie.where(title: name).size > 0
@@ -70,7 +81,7 @@ namespace :fill_db do
     end
         
     def fill_table_movie_sessions(name, parser_maxi)
-      cinema = Cinema.where(title: 'Кронверк Синема')
+      cinema = Cinema.where(title: KRONVERK)
       cinema_id = cinema.first.id if cinema.size > 0
       movie = Movie.where(title: name)
       movie_id = movie.first.id if movie.size > 0
@@ -93,8 +104,20 @@ namespace :fill_db do
     end
         
     def add_Kronverk_to_table_cinemas
-      if Cinema.where(title: 'Кронверк Синема').size == 0
-        Cinema.create(title: 'Кронверк Синема').save
+      if Cinema.where(title: KRONVERK).size == 0
+        Cinema.create(title: KRONVERK).save
+      end
+    end
+        
+    def delete_past_sessions
+      if Cinema.where(title: KRONVERK).size > 0
+        cinema_id = Cinema.where(title: KRONVERK).first.id
+        d = Time.now.strftime("%Y-%m-%d")
+        t = Time.now.strftime("%H:%M:%S")
+        MovieSession.where(cinema_id: cinema_id).where("`date` < ? OR (`date` = ? AND `time` < ?)" , d, d, t)
+          .each do |session|
+          @count_delete_items_movie_session += MovieSession.delete(session.id)
+        end
       end
     end
 
@@ -110,10 +133,12 @@ namespace :fill_db do
     end
     fill_table_genres
     fill_table_genre_movies(parser_maxi)
-      
-    puts 'Количество добавленных фильмов:' + @count_create_items_movie.to_s
-    puts 'Количество обновлённых фильмов:' + @count_update_items_movie.to_s
-    puts 'Количество добавленных жанров:' + @count_create_items_genre.to_s
-    puts 'Количество обновлённых жанров:' + @count_update_items_genre.to_s 
+    delete_past_sessions
+
+    puts 'Количество добавленных фильмов: ' + @count_create_items_movie.to_s
+    puts 'Количество обновлённых фильмов: ' + @count_update_items_movie.to_s
+    puts 'Количество добавленных жанров: ' + @count_create_items_genre.to_s
+    puts 'Количество обновлённых жанров: ' + @count_update_items_genre.to_s
+    puts 'Количество удалённых сеансов: ' + @count_delete_items_movie_session.to_s
   end
 end
