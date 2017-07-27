@@ -18,7 +18,7 @@ ru:
         age_rating: 'Возрастной рейтинг'
         duration: 'Время'
         country: 'Страна'
-        producer: 'Режиссёр'
+        director: 'Режиссёр'
         budget: 'Бюджет'
         actors: 'В ролях'
         description: 'Описание'

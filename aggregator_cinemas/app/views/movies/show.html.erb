@@ -31,17 +31,25 @@
               <div>
                 <%= image_tag @movie.image.url(:large), class: 'img-show img-fluid img_large' if @movie.image? %>
                 <p>
-                Жанр: <% @movie.genres.each do |genre| %>
-                  <%= link_to genre.title, genre_path(genre.title) %>
-                <% end %><br>
-                Рейтинг Кинопоиск: <%= @movie.rating_kinopoisk %>, количество голосов: <%= @movie.voice_kinopoisk %>.<br>
-                Рейтинг IMDB: <%= @movie.rating_imdb %>, количество голосов: <%= @movie.voice_imdb %>.<br>
+                Жанр: 
+                <% if @movie.genres != nil %>
+                  <% @movie.genres.each do |genre| %>
+                    <%= link_to genre.title, genre_path(genre.title) %>
+                  <% end %>
+                <% end %>
+                <br>
+                <% until @movie.rating_kinopoisk.nil? %>
+                  Рейтинг Кинопоиск: <%= @movie.rating_kinopoisk %>, количество голосов: <%= @movie.voice_kinopoisk %>.<br>
+                <% end %>
+                <% until @movie.rating_imdb.nil? %>
+                  Рейтинг IMDB: <%= @movie.rating_imdb %>, количество голосов: <%= @movie.voice_imdb %>.<br>
+                <% end %>
                 Возрастной рейтинг: <%= @movie.age_rating %><br>
-                Продолжительность фильма: <%= @movie.duration.to_time.strftime("%H:%M") if @movie.duration? %><br>
-                Страна: <%= @movie.country %><br>
-                Режиссёр: <%= @movie.producer %><br>
-                Бюджет: <%= @movie.budget %><br>
-                В ролях: <%= @movie.actors %>
+                Продолжительность фильма: <%= @movie.duration if @movie.duration? %><br>
+                Страна: <%= @movie.country if @movie.country? %><br>
+                Режиссёр: <%= @movie.director if @movie.director? %><br>
+                Бюджет: <%= @movie.budget if @movie.budget? %><br>
+                В ролях: <%= @movie.actors if @movie.actors? %>
                 </p>
               </div>
             </div>

@@ -1,6 +1,6 @@
 class Movie < ApplicationRecord
   mount_uploader :image, ImageUploader
-  validates :title, :age_rating, :country, :producer, :actors, :description, presence: true
+  validates :title, :age_rating, :country, :description, presence: true
 
   has_many :movie_sessions
 
