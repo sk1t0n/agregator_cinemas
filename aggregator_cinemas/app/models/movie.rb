@@ -1,6 +1,6 @@
 class Movie < ApplicationRecord
   mount_uploader :image, ImageUploader
-  validates :title, :age_rating, :country, :description, presence: true
+  validates :title, :age_rating, :country, presence: true
 
   has_many :movie_sessions
 
@@ -13,7 +13,7 @@ class Movie < ApplicationRecord
 
   def all_genres=(titles)
     self.genres = titles.split(',').map do |title|
-      Genre.where(title: title.downcase.strip).first_or_create!
+      Genre.where(title: title.strip.capitalize).first_or_create
     end
   end
 end

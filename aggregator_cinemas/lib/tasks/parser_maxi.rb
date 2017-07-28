@@ -25,8 +25,8 @@ class ParserMaxi
   def fill_movie_names_urls(movie_names, movie_urls, url)
     html = Nokogiri::HTML(open(url), nil, 'utf-8')
     html.css('div.cinemas>div.item>b.name>a').each do |a|
-      movie_names << a.text
-      movie_urls << 'http://formulakino.ru' + a['href']
+      movie_names.push(a.text)
+      movie_urls.push('http://formulakino.ru' + a['href'])
     end
   end
   
@@ -53,7 +53,7 @@ class ParserMaxi
   def add_images_to_movies(html, name)
     img_urls = []
     html.css('div.frames-list-gal img').each do |img|
-      img_urls << 'http://formulakino.ru' + img['data-src']
+      img_urls.push('http://formulakino.ru' + img['data-src'])
     end
     @movies[name][:images] = img_urls
   end
